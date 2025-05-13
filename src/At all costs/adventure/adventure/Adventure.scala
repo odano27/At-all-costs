@@ -6,8 +6,7 @@ class Adventure(var pName: String):
   def title =
     val x =
       if pName != "" then
-        if pName == "Poo" || pName == "Linh Pham" || pName == "Po" then """, 𝐈 𝐦𝐢𝐬𝐬 𝐲𝐨𝐮 𝐛𝐢𝐬𝐡""" //shoutout to someone I miss a lot
-        else s", ${pName}"
+        s", ${pName}"
       else  ""
     "Leave at all costs" + x
 
