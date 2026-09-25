@@ -1,8 +1,7 @@
 package adventure
 
 /** The class `Item` represents items in a text adventure game. Each item has a name
-  * and a longer description. (In later versions of the adventure game, items may
-  * have other features as well.)
+  * and a longer description.
   *
   * N.B. It is assumed, but not enforced by this class, that items have unique names.
   * That is, no two items in a game world have the same name.
@@ -15,4 +14,3 @@ class Item(val name: String, val description: String):
   override def toString = this.name
 
 end Item
-

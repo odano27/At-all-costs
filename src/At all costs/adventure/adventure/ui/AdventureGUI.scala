@@ -3,9 +3,9 @@ package adventure.ui
 import scala.swing.*
 import scala.swing.event.*
 import javax.swing.UIManager
-import adventure.Adventure
-import smcl.pictures.Picture
-import java.io.File //used to open the map file from within the .jar
+import adventure.{Adventure, Ending}
+import java.awt.Desktop
+import java.io.{File, IOException}
 
 import java.awt.{Dimension, Insets, Point}
 import scala.language.adhocExtensions // enable extension of Swing classes
@@ -15,23 +15,12 @@ object AdventureGUI extends SimpleSwingApplication :
 
   def top = new MainFrame :
 
-    var endings = Map[String, Boolean](
-      "Zzz...Zzz" -> false,
-      "Humiliating!" -> false,
-      "Stick to your lies!" -> false,
-      "Thank god for the nurse." -> false,
-      "Lucky it ran on battery!" -> false,
-      "Dexterity 100!" -> false,
-      "Certified pyromaniac" -> false,
-      "A-Are you okay?" -> false,
-      "You already lied once..." -> false,
-      "Fool around and find out!" -> false
-    )
-    def won = endings.forall(_._2)
-    // Access to the application’s internal logic:
+    // Access to the application’s internal logic. The player's name and the endings they
+    // have reached are carried over from one play-through to the next.
     var name = ""
+    var endings = Set[Ending]()
     var game = Adventure(name)
-    var player = game.player
+    def won = endings.size == Ending.values.length
 
     // Components:
 
@@ -75,30 +64,32 @@ object AdventureGUI extends SimpleSwingApplication :
       layout += turnOutput -> Constraints(1, 2, 1, 1, 1, 1, SouthWest.id, Fill.Both.id, Insets(5, 5, 5, 5), 0, 0)
 
     // create a new adventure and player instance, update the GUI
-    def tryAgain =
-      this.endings = game.endings
-      game = Adventure(name)
-      game.endingsReached(this.endings)
-      this.player = game.player
+    def tryAgain() =
+      game = Adventure(name, endings)
       updateInfo(this.game.welcomeMessage)
       this.input.enabled = true
       this.pack()
       this.input.requestFocusInWindow()
 
-    //opens the map image file
-    def Img():Unit =
-      var a = new File(AdventureGUI.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).getPath
-      a=a.dropRight(a.length-a.lastIndexOf('\\')-1) + "map.png"
-      Runtime.getRuntime.exec(s"""cmd /c "${a}"""")
-
-
+    /** Opens the map image (map.png) that sits in the same directory as the game, using the
+      * system's default image viewer. */
+    def openMap(): Unit =
+      val codeLocation = File(AdventureGUI.getClass.getProtectionDomain.getCodeSource.getLocation.toURI)
+      val candidates = Vector(File(codeLocation.getParentFile, "map.png"), File("map.png"))
+      candidates.find(_.isFile) match
+        case None =>
+          Dialog.showMessage(this.contents.head, "Could not find map.png. Keep it in the same folder as the game.", "Map", Dialog.Message.Error)
+        case Some(mapFile) =>
+          try Desktop.getDesktop.open(mapFile)
+          catch case _: (IOException | UnsupportedOperationException) =>
+            Dialog.showMessage(this.contents.head, s"Could not open the map. You can find it at:\n${mapFile.getAbsolutePath}", "Map", Dialog.Message.Error)
 
     // Menu:
     this.menuBar = new MenuBar :
       contents += new Menu("Program") :
         val quitAction = Action("Quit")(dispose())
-        val retry = Action("Try again")(tryAgain)
-        val map = Action("Map")(Img())
+        val retry = Action("Try again")(tryAgain())
+        val map = Action("Map")(openMap())
         contents += MenuItem(quitAction)
         contents += MenuItem(retry)
         contents += MenuItem(map)
@@ -120,24 +111,17 @@ object AdventureGUI extends SimpleSwingApplication :
 
 
     def updateInfo(info: String) =
-      name = game.pName
+      name = game.playerName
+      endings = game.reachedEndings
       this.title = game.title
-      if !this.game.isOver then
-        this.turnOutput.text = info
-      else
-        if !won then
-          this.turnOutput.text = info + "\n" + this.game.goodbyeMessage
-        else
-          this.turnOutput.text = info + "\n" + this.game.finishedGoodbye //display a slightly different text if all endings have been reached
-        this.endings = game.endings //update endings list when an ending is reached
-      if !won then
-        this.locationInfo.text = this.player.location.fullDescription
-        val instructions =
-          if this.game.started && !this.game.isOver then """    Type "help" for instructions. 𝐋𝐨𝐨𝐤 𝐨𝐮𝐭 𝐟𝐨𝐫 𝐚𝐜𝐭𝐢𝐨𝐧 𝐜𝐮𝐞𝐬 (more info in the instructions).""" else "    Type \"help\" for instructions. "
-        this.turnCounter.text = s"Endings reached: ${endings.count(x => x._2)}/${endings.size} | Turns played: " + this.game.turnCount + instructions
-      else //display a congratulation message when all endings have been reached
-        this.turnCounter.text = s"Endings reached: ${endings.count(x => x._2)}/${endings.size} | Turns played: " + this.game.turnCount
-        this.locationInfo.text = this.player.location.fullDescription + "\n\nCongratulations!!! You've reached all endings."
+      this.turnOutput.text = if this.game.isOver then info + "\n" + this.game.goodbyeMessage else info
+      val instructions =
+        if won then ""
+        else if this.game.started && !this.game.isOver then """    Type "help" for instructions. 𝐋𝐨𝐨𝐤 𝐨𝐮𝐭 𝐟𝐨𝐫 𝐚𝐜𝐭𝐢𝐨𝐧 𝐜𝐮𝐞𝐬 (more info in the instructions)."""
+        else "    Type \"help\" for instructions. "
+      this.turnCounter.text = s"Endings reached: ${endings.size}/${Ending.values.length} | Turns played: ${this.game.turnCount}" + instructions
+      val congratulations = if won then "\n\nCongratulations!!! You've reached all endings." else ""
+      this.locationInfo.text = this.game.player.location.fullDescription + congratulations
 
   end top
 

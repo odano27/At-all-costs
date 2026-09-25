@@ -1,0 +1,7 @@
+# LaTeX build files
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.pdf
+# Compiled classes
+out/

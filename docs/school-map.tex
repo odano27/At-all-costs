@@ -1,0 +1,100 @@
+% The school map of "Leave at all costs", drawn with TikZ.
+% This file only contains the picture; it is \input by map.tex (the standalone map that the
+% game opens from its "Map" menu) and by README.tex.
+%
+% Required packages: tikz, with the libraries positioning, fit, backgrounds, calc, arrows.meta.
+%
+% Every room is placed on a grid so that the compass directions used in the game match the
+% page: north is up, east is right. Grey rooms have stairs ("go up" / "go down").
+\begin{tikzpicture}[
+    font=\sffamily\small,
+    room/.style={draw, rounded corners=4pt, thick, fill=white, align=center,
+                 minimum width=2.5cm, minimum height=1.35cm, text width=2.3cm},
+    stairs/.style={room, fill=black!18},
+    tower/.style={stairs, minimum width=2.1cm, minimum height=0.8cm, text width=1.9cm},
+    link/.style={{Latex[length=2.2mm]}-{Latex[length=2.2mm]}, line width=1.6pt},
+    vlink/.style={link, black!55, dashed},
+    floor/.style={draw=black!40, fill=black!4, rounded corners=8pt, inner sep=10pt},
+    floorlabel/.style={font=\sffamily\bfseries, anchor=north west, black!65},
+    updown/.style={font=\sffamily\scriptsize\itshape, solid, draw=none, fill=black!4, text=black!75,
+                   inner sep=2pt, line width=0pt},
+  ]
+
+  % ---------------- Floor 1 ----------------
+  \node[room]   (robotics)  at (0, 3)   {Robotics room};
+  \node[room]   (class)     at (-3.2, 0) {Room 1.1\\\textbf{(your class)}};
+  \node[room]   (hall1)     at (0, 0)   {Floor 1 centre\\(notice screen)};
+  \node[stairs] (room12)    at (3.2, 0) {Room 1.2\\(stairs)};
+  \node[stairs] (corner1)   at (-3.2,-3) {Corner stairs\\floor 1};
+  \node[room]   (room13)    at (0, -3)  {Room 1.3};
+
+  % ---------------- Floor 0 ----------------
+  \node[room]   (library)   at (0, -7)   {Library};
+  \node[room]   (physics)   at (-3.2,-10) {Physics lab};
+  \node[room]   (hall0)     at (0, -10)  {Floor 0 centre\\(notice screen)};
+  \node[stairs] (infirmary) at (3.2,-10) {Infirmary\\(stairs)};
+  \node[stairs] (principal) at (-3.2,-13) {Corner stairs\\floor 0\\(principal)};
+  \node[room]   (chem)      at (0, -13)  {Chemistry lab};
+  \node[room, very thick, fill=green!12] (exit) at (3.2,-13) {\textbf{The exit}};
+
+  % ---------------- Stairs to the rooftop ----------------
+  \node[tower] (s2)    at (-7, -3)   {Floor 2};
+  \node[tower] (s3)    at (-7, -1.5) {Floor 3};
+  \node[tower] (s4)    at (-7, 0)    {Floor 4};
+  \node[tower] (s5)    at (-7, 1.5)  {Floor 5};
+  \node[tower] (roof)  at (-7, 3)    {Rooftop};
+  \node[room, minimum height=0.8cm] (roofN) at (-7, 4.5) {Rooftop north};
+
+  % ---------------- Background panels ----------------
+  \begin{scope}[on background layer]
+    \node[floor, fit=(robotics)(class)(room12)(corner1)(room13)] (F1) {};
+    \node[floor, fit=(library)(physics)(infirmary)(principal)(exit)] (F0) {};
+    \node[floor, fit=(s2)(roofN)] (T) {};
+  \end{scope}
+  \node[floorlabel] at (F1.north west) {Floor 1};
+  \node[floorlabel] at (F0.north west) {Floor 0 (ground)};
+  \node[floorlabel, anchor=south west] at (T.north west) {Corner staircase};
+
+  % ---------------- Same-floor connections ----------------
+  \draw[link] (hall1) -- (robotics);
+  \draw[link] (hall1) -- (class);
+  \draw[link] (hall1) -- (room12);
+  \draw[link] (hall1) -- (room13);
+  \draw[link] (class) -- (corner1);
+  \draw[link] (corner1) -- (room13);
+
+  \draw[link] (hall0) -- (library);
+  \draw[link] (hall0) -- (physics);
+  \draw[link] (hall0) -- (infirmary);
+  \draw[link] (hall0) -- (chem);
+  \draw[link] (physics) -- (principal);
+  \draw[link] (principal) -- (chem);
+  \draw[link] (chem) -- (exit);
+  \draw[link] (infirmary) -- (exit);
+  \draw[link] (hall0.south east) -- (exit.north west);      % south-east
+  \draw[link] (chem.north east) -- (infirmary.south west);  % north-east
+
+  \draw[link] (roofN) -- (roof);
+  \foreach \a/\b in {roof/s5, s5/s4, s4/s3, s3/s2} \draw[vlink] (\a) -- (\b);
+
+  % ---------------- Stairs between floors (up / down) ----------------
+  \draw[vlink] (room12) -- node[updown, pos=0.5] {up / down} (infirmary);
+  \draw[vlink] (corner1.west) -- node[updown, above] {up / down} (s2.east);
+  \draw[vlink] (corner1.south) -- ++(0,-1.25) -| ([xshift=-1.6cm]physics.west)
+               |- node[updown, pos=0.25] {up / down} (principal.west);
+
+  % ---------------- Legend and compass ----------------
+  \begin{scope}[shift={(7.3, 3.4)}]
+    \draw[thick, -{Latex[length=3mm]}] (0,-0.8) -- (0,0.8) node[above, font=\sffamily\bfseries] {N};
+    \draw[thick] (-0.6,0) -- (0.6,0);
+    \node[font=\sffamily\scriptsize] at (-0.85,0) {W};
+    \node[font=\sffamily\scriptsize] at (0.85,0) {E};
+    \node[font=\sffamily\scriptsize] at (0,-1.05) {S};
+  \end{scope}
+  \begin{scope}[shift={(7.3, -0.3)}, every node/.style={font=\sffamily\scriptsize, anchor=west}]
+    \draw[link] (-0.7,0.6) -- (0,0.6) node[right=2pt] {walk (north, east, ...)};
+    \draw[vlink] (-0.7,0) -- (0,0) node[right=2pt] {stairs (up, down)};
+    \node[stairs, minimum width=0.7cm, minimum height=0.45cm, text width={}] at (-0.4,-0.65) {};
+    \node at (0.35,-0.65) {has stairs};
+  \end{scope}
+\end{tikzpicture}
