@@ -1,10 +1,10 @@
 package adventure
 
-/** This can be treated same as the item class, but fewer methods will be using this */
-class NPC(val name: String, var description: String):
-
-  def altdes(newdes: String) =
-    description = newdes
+/** A non-player character that the player can `ask` for a favour.
+  *
+  * @param name  an identifier for the character (not shown to the player)
+  * @param reply what happens when the player asks the character for something */
+class NPC(val name: String, val reply: String):
 
   override def toString = this.name
 

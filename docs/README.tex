@@ -1,0 +1,178 @@
+% Player guide for "Leave at all costs". Build with:  pdflatex README.tex  (run it twice)
+% and copy README.pdf to the repository root.
+\documentclass[11pt, a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{positioning, fit, backgrounds, calc, arrows.meta}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{alarm}{HTML}{C62828}
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\good}{\textcolor{green!45!black}{\textbf{good}}}
+\newcommand{\bad}{\textcolor{alarm}{\textbf{bad}}}
+\setlist{itemsep=2pt, topsep=4pt}
+
+\title{\textbf{Leave at all costs}\\[2pt]\large A short text adventure about escaping a very boring class}
+\author{Player guide}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section*{The story}
+You are in high school, sitting through the most boring Civics class of your life, and you
+cannot take it any longer. After a few choices that may or may not end well for you, you find
+yourself out in the school corridors. Unfortunately, the exit is locked. Use the items you find
+and the people you meet to get out of school, \textcolor{alarm}{\textbf{AT ALL COSTS}}.
+
+\section*{Goal}
+There are \textbf{10 endings}, good and bad. Your goal is to reach all of them. A good ending
+means you leave the school without any hiccups; everything else is a bad one. Each attempt
+must be finished within \textbf{40 turns} --- run out of time and the principal catches you
+(this does not count as an ending). Endings are remembered between attempts: after an
+ending, choose \emph{Program $\to$ Try again} to play again.
+
+The game rewards paying attention to details: read the location descriptions carefully.
+
+\section*{Running the game}
+\begin{itemize}
+  \item You need Java 8 or newer. Double-click \texttt{At all costs (executable).jar}, or run
+        \texttt{java -jar "At all costs (executable).jar"} in a terminal.
+  \item \emph{Program $\to$ Map} opens the school map (\texttt{map.png}) in your image viewer.
+        Keep \texttt{map.png} in the same folder as the \texttt{.jar} file.
+        The map is also on page~\pageref{sec:map} of this guide.
+\end{itemize}
+
+\section*{How to play}
+The game has two phases.
+\begin{enumerate}
+  \item \textbf{Multiple choice.} First type your name. After that, every turn gives you two
+        options: answer \cmd{1} or \cmd{2}.
+  \item \textbf{Adventure.} You walk around the school by typing commands:
+\end{enumerate}
+
+\begin{center}
+\begin{tabularx}{0.9\textwidth}{@{}lX@{}}
+  \toprule
+  Command & What it does \\
+  \midrule
+  \cmd{go} \emph{direction}   & Move north, south, east, west, northeast, \dots, up or down. \\
+  \cmd{get} \emph{item}       & Pick up an item you see. \\
+  \cmd{drop} \emph{item}      & Put down an item you are carrying. \\
+  \cmd{examine} \emph{item}   & Take a closer look at an item you are carrying. \\
+  \cmd{use} \emph{item}       & Use an item you are carrying. \\
+  \cmd{inventory}             & List what you are carrying. \\
+  \cmd{ask}                   & Ask the person here for a favour. \\
+  \cmd{rest}                  & Wait for a turn. \\
+  \cmd{help}                  & Show the instructions. \\
+  \cmd{endings}               & List the endings you have reached. \\
+  \cmd{quit}                  & Give up this attempt. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent Some things to know:
+\begin{itemize}
+  \item \textbf{There are more commands than the ones listed.} They are single verbs hinted at
+        in the location descriptions (sometimes you have to infer them!).
+  \item Commands are not case-sensitive, and extra spaces are ignored.
+  \item \cmd{help}, \cmd{endings} and commands the game does not understand do not use up a turn.
+        Everything else does.
+\end{itemize}
+
+\section*{Endings}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  & Ending & Kind \\
+  \midrule
+  1  & Zzz\dots Zzz                   & \bad  \\
+  2  & Humiliating!                   & \bad  \\
+  3  & Stick to your lies!            & \bad  \\
+  4  & Thank god for the nurse.       & \good \\
+  5  & Lucky it ran on battery!       & \good \\
+  6  & Dexterity 100!                 & \good \\
+  7  & Certified pyromaniac           & \good? \\
+  8  & A-Are you okay?                & \bad  \\
+  9  & You already lied once\dots     & \bad  \\
+  10 & Fool around and find out!      & \bad  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textcolor{alarm}{\textbf{The school map is on the next page, the walkthrough on the last page.}}
+Have a go before reading the walkthrough!
+
+\newpage
+\section*{School map}\label{sec:map}
+North is up and east is to the right, matching the directions used in the game. Grey rooms
+have stairs, so you can \cmd{go up} and/or \cmd{go down} from there.
+
+\vspace{1em}
+\begin{center}
+  \resizebox{\textwidth}{!}{\input{school-map}}
+\end{center}
+
+\newpage
+\section*{Walkthrough \normalfont\small(spoilers!)}
+
+\subsection*{Multiple-choice phase}
+\begin{itemize}
+  \item After you give your name, choosing to ignore the urge to sneak out makes you fall
+        asleep in class $\to$ \bad\ ending \emph{Zzz\dots Zzz}.
+  \item Otherwise you can \textbf{fake being ill} or \textbf{ask to go to the toilet}.
+  \item Going to the toilet starts the adventure right outside your class (Room~1.1).
+  \item If you fake being ill, you must let the teacher take you to the infirmary; refusing
+        gives you away $\to$ \bad\ ending \emph{Humiliating!}
+  \item The nurse asks what is wrong. You had been coughing and sniffling, so claiming a
+        headache does not add up $\to$ \bad\ ending \emph{Stick to your lies!}
+  \item Complaining about your breathing and throat works: the nurse gives you a sick note and
+        the adventure starts at the infirmary.
+\end{itemize}
+
+\subsection*{Adventure phase: four ways to unlock the exit}
+\begin{enumerate}
+  \item \textbf{Sick note.} Get a sick note from the nurse (\cmd{ask} at the infirmary, unless
+        you already have one) and \cmd{ask} the principal at the floor-0 corner stairs to unlock
+        the exit $\to$ \good\ ending \emph{Thank god for the nurse.}
+  \item \textbf{Prying.} Get the \emph{motor} from the robotics room and \cmd{ask} the physics lab
+        instructor for a \emph{wrench}. At the exit, \cmd{use motor}, \cmd{use wrench} or
+        \cmd{pry} $\to$ \good\ ending \emph{Lucky it ran on battery!}
+  \item \textbf{Acid.} Get the \emph{black bottle} (sulphuric acid) from the chemistry lab and
+        \cmd{use black bottle} at the exit $\to$ \good\ ending \emph{Dexterity 100!}
+  \item \textbf{Fire.} Get the \emph{red canister} (fuel) from the floor-2 stairs and the black
+        bottle, then go to the library and \cmd{use red canister}, \cmd{use black bottle} or
+        \cmd{burn}. The fire alarm unlocks the exit $\to$ \good?\ ending \emph{Certified pyromaniac}.
+\end{enumerate}
+Only the first way you unlock the exit counts: once it is open, the other methods (and the
+principal) will not work any more.
+
+\subsection*{Accidents}
+\begin{itemize}
+  \item If you faked being ill, your teacher is watching the corridor. Spend 3 turns outside
+        your class (Room~1.1) and they notice $\to$ \bad\ ending \emph{You already lied once\dots}
+        (This cannot happen if you went ``to the toilet''.)
+  \item After starting the fire, spend 2 more turns in the library, in one go or over several
+        visits, and you pass out in the smoke. You are rescued, but arrested for arson
+        $\to$ \bad\ ending \emph{Fool around and find out!}
+  \item Climb the corner staircase all the way to the rooftop. The railing to the north is
+        broken; from there \cmd{jump} or \cmd{go down} $\to$ \bad\ ending \emph{A-Are you okay?}
+        This is meant to be the hardest ending to find: only a small hint in the text says you
+        can jump.
+\end{itemize}
+
+\noindent Running out of turns (40) ends the attempt without unlocking an ending.
+
+\vfill
+\noindent\small\textcolor{black!60}{If you or someone you know is in a crisis, help is available.
+Contact your local emergency number or a crisis helpline.}
+
+\end{document}

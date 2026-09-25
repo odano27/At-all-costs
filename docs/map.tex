@@ -1,0 +1,9 @@
+% Standalone school map. Build with:  pdflatex map.tex
+% Then export the image that the game opens from its "Map" menu:
+%   pdftoppm -png -r 150 -singlefile map.pdf ../map
+\documentclass[border=12pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, fit, backgrounds, calc, arrows.meta}
+\begin{document}
+\input{school-map}
+\end{document}
